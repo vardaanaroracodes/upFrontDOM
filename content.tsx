@@ -2,6 +2,7 @@
 import type { PlasmoContentScript } from "plasmo"
 import React, { useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
+import './style.css';
 
 // Define data structure
 type ProfileData = {
@@ -80,40 +81,51 @@ function ProfileApp() {
       .catch(() => setStatus("Send failed"))
   }
 
-  const refreshProfile = () => {
-    setProfile(extractProfileData())
-    setStatus("Profile refreshed.")
-  }
-
   return (
-    <div style={{ maxWidth: 400, margin: '2rem auto', padding: '1.5rem', borderRadius: 24, background: 'linear-gradient(135deg, #1f2937, #4f46e5, #000)', color: 'white', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' }}>
-      <h2 style={{ textAlign: 'center', fontSize: '3.5rem', fontWeight: 700, color: 'white' }}>UpFront</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {([['name','Name'],['location','Location'],['currentPosition','Postion'],['currentCompany','Company'],['period','Period']] as const).map(label => {
+    <div className="max-w-[400px] mx-auto my-5 p-6 rounded-[24px] bg-gradient-to-br from-red-500 via-pink-500 to-red-600 text-white ">
+      <h2 className="text-center text-[3.5rem] font-bold text-white">UpFront</h2>
+      <div className="flex flex-col gap-3">
+        {([
+          ['name', 'Name'],
+          ['location', 'Location'],
+          ['currentPosition', 'Position'],
+          ['currentCompany', 'Company'],
+          ['period', 'Period']
+        ] as const).map(label => {
           const key = label[0] as keyof ProfileData
           return (
-            <div key={label[0]} style={{ display: 'flex' }}>
-              <span style={{ width: '30%', fontWeight: 600 }}>{label[1]}:</span>
-              <span style={{ flex: 1, color: '#d1d5db' }}>{profile[key] || '–'}</span>
+            <div key={label[0]} className="flex">
+              <span className="w-1/3 font-semibold">{label[1]}</span>
+              <span className="flex-1 text-white">{profile[key] || '–'}</span>
             </div>
           )
         })}
       </div>
-      <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <label style={{ fontSize: '0.875rem', fontWeight: 500 }}>Google Sheet URL</label>
+
+      <div className="mt-1 flex flex-col gap-4">
+        <label className="text-xl font-medium">Google Sheet URL</label>
         <input
           value={inputValue}
-          
           onChange={e => setInputValue(e.target.value)}
-          placeholder={sheetUrl?'Sheet Already Exists':'Enter sheet URL'}
-          style={{ padding: '0.5rem', borderRadius: 8, background: '#374151', border: 'none', color: 'white' }}
+          placeholder={sheetUrl ? 'Sheet Already Exists' : 'Enter sheet URL'}
+          className="w-full h-12 rounded-lg bg-white px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
         />
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button onClick={saveUrl} style={{ padding: '0.5rem', borderRadius: '9999px', border: 'none', cursor: 'pointer', background: '#2563eb', color: 'white' }}>Save URL</button>
-          <button onClick={sendToSheet} style={{ flex: 1, padding: '0.5rem', borderRadius: '9999px', border: 'none', cursor: 'pointer', background: '#4f46e5', color: 'white' }}>Send to Sheet</button>
+        <div className="flex justify-between">
+            <button
+            onClick={saveUrl}
+    className="align-middle h-20 w-40 select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none  py-2 px-2 bg-gradient-to-tr from-white to-pink-100  shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] rounded-full text-black text-xl"
+    type="button">
+    Save Sheet
+  </button>
+  <button
+            onClick={sendToSheet}
+    className="align-middle h-20 w-40 select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none  py-2 px-2 bg-gradient-to-tr from-white to-pink-100  shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] rounded-full text-black text-xl"
+    type="button">
+    Enrich
+  </button>
+         
         </div>
-        <button onClick={refreshProfile} style={{ padding: '0.5rem', borderRadius: '9999px', border: 'none', cursor: 'pointer', background: '#4b5563', color: 'white' }}>Refresh</button>
-        {status && <div style={{ textAlign: 'center', color: '#fbbf24', fontSize: '0.875rem' }}>{status}</div>}
+        {status && <div className="text-center text-yellow-400 text-sm">{status}</div>}
       </div>
     </div>
   )
