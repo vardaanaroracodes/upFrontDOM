@@ -81,51 +81,109 @@ function ProfileApp() {
       .catch(() => setStatus("Send failed"))
   }
 
-  return (
-    <div className="max-w-[400px] mx-auto my-5 p-6 rounded-[24px] bg-gradient-to-br from-red-500 via-pink-500 to-red-600 text-white ">
-      <h2 className="text-center text-[3.5rem] font-bold text-white">UpFront</h2>
-      <div className="flex flex-col gap-3">
-        {([
-          ['name', 'Name'],
-          ['location', 'Location'],
-          ['currentPosition', 'Position'],
-          ['currentCompany', 'Company'],
-          ['period', 'Period']
-        ] as const).map(label => {
-          const key = label[0] as keyof ProfileData
-          return (
-            <div key={label[0]} className="flex">
-              <span className="w-1/3 font-semibold">{label[1]}</span>
-              <span className="flex-1 text-white">{profile[key] || '–'}</span>
-            </div>
-          )
-        })}
-      </div>
+  // Function to get the profile image
+  const getProfileImage = () => {
+    const imgEl = document.querySelector('.pv-top-card-profile-picture__image') || 
+                 document.querySelector('.profile-photo-edit__preview') ||
+                 document.querySelector('.presence-entity__image img')
+    return imgEl?.getAttribute('src') || null
+  }
 
-      <div className="mt-1 flex flex-col gap-4">
-        <label className="text-xl font-medium">Google Sheet URL</label>
-        <input
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          placeholder={sheetUrl ? 'Sheet Already Exists' : 'Enter sheet URL'}
-          className="w-full h-12 rounded-lg bg-white px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
-        />
-        <div className="flex justify-between">
+  const profileImage = getProfileImage()
+
+  return (
+    <div className="mx-auto my-5 p-4 rounded-lg bg-[#B84271] text-white shadow-lg">
+      <div className="flex flex-wrap">
+        {/* Left side - Profile pic and basic info */}
+        <div className="w-full md:w-1/3 p-4 flex flex-col">
+          <div className="flex flex-col items-center">
+            {profileImage ? (
+              <div className="w-36 h-36 rounded-full mb-4 overflow-hidden bg-white border-3 border-white">
+                <img src={profileImage} alt={profile.name} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-36 h-36 rounded-full mb-4 bg-gray-300 flex items-center justify-center border-3 border-white">
+                <span className="text-gray-600 text-4xl">👤</span>
+              </div>
+            )}
+            <div className="text-center">
+              <p className="font-bold text-3xl mb-1">{profile.name || '–'}</p>
+              <p className="text-xl text-white/90 mb-1">{profile.currentPosition || '–'}</p>
+              <p className="text-xl text-white/80">{profile.location || '–'}</p>
+            </div>
+          </div>
+          
+          <div className="mt-auto flex flex-col">
             <button
-            onClick={saveUrl}
-    className="align-middle h-20 w-40 select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none  py-2 px-2 bg-gradient-to-tr from-white to-pink-100  shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] rounded-full text-black text-xl"
-    type="button">
-    Save Sheet
-  </button>
-  <button
-            onClick={sendToSheet}
-    className="align-middle h-20 w-40 select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none  py-2 px-2 bg-gradient-to-tr from-white to-pink-100  shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 active:opacity-[0.85] rounded-full text-black text-xl"
-    type="button">
-    Enrich
-  </button>
-         
+              onClick={saveUrl}
+              className="mb-3 text-xl font-semibold text-center py-3 px-6 bg-white text-[#B84271] rounded-full shadow-md hover:bg-gray-100 transition-colors"
+              type="button">
+              Save Sheet
+            </button>
+            <button
+              onClick={sendToSheet}
+              className="text-xl font-semibold text-center py-3 px-6 bg-white text-[#B84271] rounded-full shadow-md hover:bg-gray-100 transition-colors"
+              type="button">
+              Enrich
+            </button>
+          </div>
         </div>
-        {status && <div className="text-center text-yellow-400 text-sm">{status}</div>}
+
+        {/* Right side - UpFront content */}
+        <div className="w-full md:w-2/3 p-4">
+          <div className="bg-white text-gray-800 p-5 rounded-lg h-full shadow-inner">
+            <h2 className="text-3xl font-bold text-[#B84271] mb-2">UpFront</h2>
+            <p className="text-lg mb-4 text-gray-500">Quickly send profile data to Google Sheets</p>
+            
+            <div className="flex flex-col gap-4 mb-5">
+              {/* First row of fields */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                {([
+                  ['name', 'Name'],
+                  ['location', 'Location'],
+                  ['currentPosition', 'Position'],
+                  // ['linkedinUrl', 'Profile URL']
+                ] as const).map(label => {
+                  const key = label[0] as keyof ProfileData
+                  return (
+                    <div key={label[0]} className="flex flex-col">
+                      <span className="text-base font-semibold text-gray-500">{label[1]}</span>
+                      <span className="text-lg truncate">{profile[key] || '–'}</span>
+                    </div>
+                  )
+                })}
+              </div>
+              
+              {/* Second row with Company and Period */}
+              <div className="grid grid-cols-2 gap-x-6">
+                {([
+                  ['currentCompany', 'Company'],
+                  ['period', 'Period']
+                ] as const).map(label => {
+                  const key = label[0] as keyof ProfileData
+                  return (
+                    <div key={label[0]} className="flex flex-col">
+                      <span className="text-base font-semibold text-gray-500">{label[1]}</span>
+                      <span className="text-lg truncate">{profile[key] || '–'}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+            
+            <div className="border-t border-gray-200 pt-4">
+              <label className="block text-xl font-medium mb-2">Google Sheet URL</label>
+              <input
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                placeholder={sheetUrl ? 'Sheet Already Exists' : 'Enter sheet URL'}
+                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-md text-gray-700 focus:ring-1 focus:ring-[#B84271] focus:border-[#B84271] focus:outline-none"
+              />
+            </div>
+            
+            {status && <div className="mt-3 text-center text-[#B84271] text-base font-medium">{status}</div>}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -133,12 +191,63 @@ function ProfileApp() {
 
 export default function ContentScript() {
   useEffect(() => {
-    const target = document.querySelector('div.ph5.pb5')
-    if (!target) return
+    const mainEl = document.querySelector('main')
+    if (!mainEl) return
+    
+    // Create a container for our extension
     const container = document.createElement('div')
-    target.insertAdjacentElement('afterend', container)
+    container.id = 'upfront-extension-root'
+    container.setAttribute('data-upfront-root', 'true')
+    
+    // Add a style tag to ensure our styles don't leak and LinkedIn's styles are preserved
+    const styleTag = document.createElement('style')
+    styleTag.textContent = `
+      /* Ensure profile images on LinkedIn maintain their style */
+      img:not(#upfront-extension-root img),
+      .presence-entity__image:not(#upfront-extension-root *),
+      .profile-photo-edit__preview:not(#upfront-extension-root *),
+      .pv-top-card-profile-picture__image:not(#upfront-extension-root *) {
+        border-radius: 50% !important;
+      }
+      
+      /* Scope our extension styles */
+      #upfront-extension-root {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+        line-height: normal;
+        box-sizing: border-box;
+      }
+      
+      #upfront-extension-root * {
+        box-sizing: border-box;
+      }
+      
+      /* Make sure our extension has some spacing */
+      #upfront-extension-root {
+        margin: 16px 0;
+        width: 100%;
+      }
+    `
+    document.head.appendChild(styleTag)
+    
+    // Find the first main section or other appropriate place to insert
+    const profileSection = document.querySelector('.scaffold-layout__main') || mainEl
+    
+    // Insert after first primary section if possible
+    const firstCardSection = profileSection.querySelector('.artdeco-card')
+    if (firstCardSection && firstCardSection.parentNode) {
+      firstCardSection.parentNode.insertBefore(container, firstCardSection.nextSibling)
+    } else {
+      // Fallback - append to main section
+      profileSection.appendChild(container)
+    }
+    
     const root = createRoot(container)
     root.render(<ProfileApp />)
+    
+    return () => {
+      styleTag.remove()
+      container.remove()
+    }
   }, [])
 
   return null
