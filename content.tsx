@@ -30,7 +30,7 @@ function extractProfileData(): ProfileData {
 
   let currentPosition = "", currentCompany = "", period = ""
   if (hasExp) {
-    currentPosition = getText('.hoverable-link-text.t-bold > span[aria-hidden="true"]')
+    currentPosition = getText('[data-view-name="profile-component-entity"] a[data-field="experience_company_logo"] .hoverable-link-text.t-bold > span[aria-hidden="true"]')
     const raw = getText(
       '[data-view-name="profile-component-entity"] a[data-field="experience_company_logo"] .t-14.t-normal:not(.t-black--light) > span[aria-hidden="true"]'
     )
@@ -93,8 +93,8 @@ function ProfileApp() {
       }
 
       // Fallback email in case HubSpot needs it
-      const email = profile.name ? `${profile.name.toLowerCase().replace(/ /g, "")}@example.com` : "unknown@example.com"
-
+      // const email = profile.name ? `${profile.name.toLowerCase().replace(/ /g, "")}@example.com` : "unknown@example.com"
+      const email="";
       setStatus("📤 Sending to HubSpot...")
       const res = await fetch("http://localhost:5001/api/enrich-contact", {
         method: "POST",

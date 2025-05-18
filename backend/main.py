@@ -285,7 +285,8 @@ def enrich_contact():
     data = request.get_json()
 
     name = data.get('name', '')
-    email = data.get('email') or f"{name.lower().replace(' ', '')}@example.com"
+    # email = data.get('email') or f"{name.lower().replace(' ', '')}@example.com"
+    email= data.get('email') or ''
     firstname = name.split()[0] if name else ''
     lastname = " ".join(name.split()[1:]) if len(name.split()) > 1 else ''
 
