@@ -303,6 +303,27 @@ def enrich_contact():
         }
     }
 
+    search_url = "https://api.hubapi.com/crm/v3/objects/contacts/search"
+    headers = {
+        'Authorization': f'Bearer {ACCESS_TOKEN}',
+        'Content-Type': 'application/json'
+    }
+    search_payload = {
+        "filterGroups": [{
+            "filters": [{
+                "propertyName": "linkedin_url",
+                "operator": "EQ",
+                "value": data.get("linkedin_url")
+            }]
+        }],
+        "properties": ["email", "firstname", "lastname"]
+    }
+
+    res = requests.post(search_url, json=search_payload, headers=headers)
+    results = res.json().get("results", [])
+    if results:
+        return jsonify({"error": "Contact with this LinkedIn already exists"}), 409
+    
     url = "https://api.hubapi.com/crm/v3/objects/contacts"
     headers = {
         'Authorization': f'Bearer {ACCESS_TOKEN}',
